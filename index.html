@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Typing Test</h1>
+        <p id="sampleText">This is a sample paragraph for the typing test. The quick brown fox jumps over the lazy dog.</p>
+        <textarea id="typingArea" placeholder="Start typing here..." oninput="trackTyping()"></textarea>
+        <button id="startButton" onclick="startTest()">Start Test</button>
+        <div id="results">
+            <p id="speed">Speed: 0 WPM</p>
+            <p id="errors">Errors: 0</p>
+            <p id="errorDetails"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
