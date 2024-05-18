@@ -1,4 +1,3 @@
-// script.js
 let startTime, endTime;
 let totalWords = 0;
 let totalErrors = 0;
@@ -17,16 +16,16 @@ function trackTyping() {
     const sampleText = document.getElementById('sampleText').innerText;
     const inputText = document.getElementById('typingArea').value;
 
-    if (inputText.length >= sampleText.length) {
-        endTest();
-    }
-
     const errors = calculateErrors(inputText, sampleText);
     totalErrors = errors;
-    const wordsTyped = inputText.split(' ').length;
+    const wordsTyped = inputText.trim().split(/\s+/).length;
     totalWords = wordsTyped;
 
     updateResults();
+
+    if (inputText === sampleText) {
+        endTest();
+    }
 }
 
 function calculateErrors(input, sample) {
@@ -35,6 +34,9 @@ function calculateErrors(input, sample) {
         if (input[i] !== sample[i]) {
             errors++;
         }
+    }
+    if (input.length < sample.length) {
+        errors += sample.length - input.length;
     }
     return errors;
 }
@@ -67,6 +69,9 @@ function generateErrorDetails(input, sample) {
         } else {
             details += input[i] || ' ';
         }
+    }
+    for (let i = input.length; i < sample.length; i++) {
+        details += `<span style="color:red">_</span>`;
     }
     return details;
 }
