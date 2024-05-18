@@ -4,20 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Typing Test Application</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Typing Test</h1>
-        <p id="sampleText">This is a sample paragraph for the typing test. The quick brown fox jumps over the lazy dog.</p>
-        <textarea id="typingArea" placeholder="Start typing here..." oninput="trackTyping()"></textarea>
+        <p id="sampleText">{{ sample_text }}</p>
+        <textarea id="typingArea" placeholder="Start typing here..."></textarea>
         <button id="startButton" onclick="startTest()">Start Test</button>
         <div id="results">
             <p id="speed">Speed: 0 WPM</p>
             <p id="errors">Errors: 0</p>
-            <p id="errorDetails"></p>
+            <p id="errorDetails">Error Details:</p>
+            <div id="errorDetailsContent"></div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        let startTime, endTime;
+        let typingArea = document.getElementById('typingArea');
+
+        function startTest() {
+            typingArea.value = "";
+            document.getElementById('results').style.display = 'none';
+            typingArea.disabled = false;
+            typingArea.focus();
+            startTime = new Date().getTime();
+        }
+
+        typingArea.addEventListener('input', trackTyping);
+
+        function trackTyping() {
+            const sampleText = document.getElementById('sampleText').innerText;
+            const inputText = typingArea.value;
+
+            if (inputText === sampleText) {
+                endTest();
+            }
+        }
+
+        function endTest() {
+            endTime = new Date().getTime();
+            typingArea.disabled = true;
+
+            const inputText = typingArea.value;
+            const sampleText = document.getElementById('sampleText').innerText;
+
+            fetch('/results', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    input_text: inputText,
+                    sample_text: sampleText,
+                    start_time: startTime,
+                    end_time: endTime
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('speed').innerText = `Speed: ${data.wpm} WPM`;
+                document.getElementById('errors').innerText = `Errors: ${data.errors}`;
+                document.getElementById('errorDetailsContent').innerText = data.error_details;
+                document.getElementById('results').style.display = 'block';
+            });
+        }
+    </script>
 </body>
 </html>
